@@ -13,6 +13,9 @@ variable "private_app_subnets_cidrs" {
 variable "vpc_name" {
   type = string
 }
+variable "region" {
+  
+}
 variable "azs" {
   type = list(string)
 }

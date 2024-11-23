@@ -1,7 +1,12 @@
+provider "aws" {
+  region = var.region
+
+}
 resource "aws_vpc" "prod_vpc" {
   cidr_block = var.cidr_block
+ 
   tags = {
-    Name = "prod_vpc"
+    Name = var.vpc_name
   }
 }
 resource "aws_subnet" "public" {
