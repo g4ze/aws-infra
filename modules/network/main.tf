@@ -12,10 +12,9 @@ module "vpc" {
 # route tables
 resource "aws_route_table" "main-public" {
   vpc_id = module.vpc.vpc_id
-  count = length(module.nat.nat_gateway_id)
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = module.nat.nat_gateway_id[count.index]
+    gateway_id = aws_internet_gateway.igw.id
   }
 
   tags = {
@@ -25,7 +24,7 @@ resource "aws_route_table" "main-public" {
 resource "aws_route_table_association" "public" {
   count          = length(module.vpc.public_subnet_ids)
   subnet_id      = module.vpc.public_subnet_ids[count.index]
-  route_table_id = aws_route_table.main-public[count.index].id
+  route_table_id = aws_route_table.main-public.id
 }
 
 
@@ -35,7 +34,7 @@ resource "aws_route_table" "private_app" {
   
   route {
     cidr_block     = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.igw.id
+    nat_gateway_id = module.nat.nat_gateway_id[count.index]
   }
 
   tags = {
@@ -48,7 +47,7 @@ resource "aws_route_table" "private_web" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.igw.id
+    nat_gateway_id = module.nat.nat_gateway_id[count.index]
   }
 
   tags = {
@@ -91,21 +90,26 @@ resource "aws_network_acl" "assingment1_nacl" {
 resource "aws_security_group" "prod_security_group" {
   vpc_id = module.vpc.vpc_id
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
   tags = {
     Name = "all in all out sec grp"
   }
+}
+resource "aws_vpc_security_group_egress_rule" "all_out" {
+  security_group_id = aws_security_group.prod_security_group.id
+
+  from_port   = 0
+  to_port     = 0
+  ip_protocol    = "-1"
+  cidr_ipv4 = "0.0.0.0/0"
+
+}
+resource "aws_vpc_security_group_ingress_rule" "all_in" {
+  security_group_id = aws_security_group.prod_security_group.id
+
+  from_port   = 0
+  to_port     = 0
+  ip_protocol    = "-1"
+  cidr_ipv4 = "0.0.0.0/0"
+
 }

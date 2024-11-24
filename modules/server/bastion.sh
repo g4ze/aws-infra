@@ -1,15 +1,15 @@
 #!bin/bash
 # sudo echo "-----BEGIN RSA PRIVATE KEY-----
-">>/home/$USER/key
-# sudo chmod 777 /home/$USER/key
+# ">>/home/$USER/key
+# # sudo chmod 777 /home/$USER/key
 #!/bin/bash
 
-# Function to print colorful messages
+
 print_message() {
     echo -e "\e[1;34m>>> $1\e[0m"
 }
 
-# Function to check Java version
+#  check Java version
 check_java() {
     if command -v java >/dev/null 2>&1; then
         java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | awk -F. '{print $1}')
@@ -21,7 +21,7 @@ check_java() {
     return 1
 }
 
-# Function to install Java
+# install Java
 install_java() {
     case "$OS" in
         "Linux")
@@ -56,7 +56,7 @@ install_java() {
     esac
 }
 
-# Function to install Jenkins
+# install Jenkins
 install_jenkins() {
     case "$OS" in
         "Linux")
@@ -97,7 +97,7 @@ install_jenkins() {
     esac
 }
 
-# Function to check if script is run as administrator/root
+#  check if script is run as administrator/root
 check_privileges() {
     case "$OS" in
         "Linux"|"Darwin")
@@ -117,9 +117,9 @@ check_privileges() {
     esac
 }
 
-# Main script
+
 main() {
-    # Detect operating system
+   
     case "$(uname -s)" in
         Linux*)     OS="Linux";;
         Darwin*)    OS="Darwin";;
@@ -129,20 +129,17 @@ main() {
 
     print_message "Detected Operating System: $OS"
     
-    # Check privileges
+    
     check_privileges
 
-    # Check and install Java if needed
     if ! check_java; then
         print_message "Compatible Java version not found. Installing Java..."
         install_java
     fi
 
-    # Install Jenkins
     print_message "Installing Jenkins..."
     install_jenkins
 
-    # Print success message and initial admin password
     print_message "Jenkins installation completed!"
     
     case "$OS" in
@@ -161,5 +158,4 @@ main() {
     esac
 }
 
-# Execute main function
 main
