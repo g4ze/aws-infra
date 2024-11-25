@@ -1,10 +1,10 @@
 resource "aws_lb" "lb" {
-  load_balancer_type = "application"
+  load_balancer_type               = "application"
   enable_cross_zone_load_balancing = true
-  subnets = var.public_subnet_ids
-  internal = false
-  
-  security_groups = [ var.security_group_id ]
+  subnets                          = var.public_subnet_ids
+  internal                         = false
+
+  security_groups = [var.security_group_id]
   tags = {
     Name = "web-elb"
   }
@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "target_elb" {
   }
 }
 resource "aws_lb_target_group_attachment" "tg_attachment" {
-  count = length(var.aws_instance_web_ids)
+  count            = length(var.aws_instance_web_ids)
   target_group_arn = aws_lb_target_group.target_elb.arn
   target_id        = var.aws_instance_web_ids[count.index]
   port             = 80

@@ -1,13 +1,11 @@
 
-# provider "aws" {
-#   alias = "eu-west-1"
+provider "aws" {
+  alias = "us-east-2"
 
-#   region = "eu-west-1"
-# }
+  region = "us-east-2"
+}
 
-# provider "aws" {
-#   alias = "ap-south-1"
-
-#   region = "ap-south-1"
-# }
+provider "aws" {
+  region = "ap-south-1"
+}
 # not reqiuired
