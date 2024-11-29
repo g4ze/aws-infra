@@ -30,7 +30,6 @@ module "elb" {
 
 /////////////////////////////
 
-
 module "network2" {
   source                    = "./modules/network"
   providers = {
@@ -69,4 +68,42 @@ module "elb2" {
   security_group_id    = module.network2.security_group_id
   vpc_id               = module.network2.vpc_id
   tg_name              = "tg-2"
+}
+///////////////////////////////////////
+
+
+
+// we wont make a zone as we need it to be alr made since we are using thrid part domain
+resource "aws_route53_record" "region1_route53_record" {
+  type           = "A"
+  zone_id        = "Z05900013PGBKBFT1VA59" //aws_route53_zone.main.id // being jardcoded sice we are using 3rd party domain
+  name           = "nilay.tech"
+  set_identifier = "region1"
+
+  alias {
+    name                   = module.elb.lb_dns_name
+    zone_id                = module.lb.lb_zone_id
+    evaluate_target_health = true
+  }
+
+  weighted_routing_policy {
+    weight = 50
+  }
+}
+
+resource "aws_route53_record" "region2_route53_record" {
+  type           = "A"
+  zone_id        = "Z05900013PGBKBFT1VA59"
+  name           = "nilay.tech"
+  set_identifier = "region2"
+
+  alias {
+    name                   = module.elb2.lb_dns_name
+    zone_id                = module.elb2.lb_zone_id
+    evaluate_target_health = true
+  }
+
+  weighted_routing_policy {
+    weight = 50
+  }
 }
